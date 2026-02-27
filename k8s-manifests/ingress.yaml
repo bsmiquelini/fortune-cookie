@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.ip/v1
+kind: Ingress
+metadata:
+  name: lab-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: lab.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
