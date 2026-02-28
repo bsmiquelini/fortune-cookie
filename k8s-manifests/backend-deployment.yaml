@@ -20,5 +20,4 @@ spec:
             - containerPort: 8080
           env:
             - name: API_URL
-              value: "https://api.advicelip.com/advice"
-
+              value: "https://api.adviceslip.com/advice"
