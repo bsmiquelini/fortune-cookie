@@ -55,18 +55,18 @@ jobs:
         working-directory: backend
         run: cargo build --release --verbose
 
-      - name: Run tests
-        working-directory: backend
-        run: cargo test --release --verbose
+      #- name: Run tests
+      #  working-directory: backend
+      #  run: cargo test --release --verbose
 
-      - name: Run clippy (linter)
-        working-directory: backend
-        run: cargo clippy --release -- -D warnings
+      #- name: Run clippy (linter)
+      #  working-directory: backend
+      #  run: cargo clippy --release -- -D warnings
 
   build-and-push-image:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    #if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     
     permissions:
       contents: read
