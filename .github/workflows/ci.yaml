@@ -1,0 +1,34 @@
+name: Build and Publish
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  USERNAME: "bsmiquelini"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Rust
+        uses: rust-lang/rustup-init@v1
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Run tests
+        run: cargo test
+
+      - name: Build Docker image
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ env.USERNAME }} --password-stdin
+          docker build . -t ghcr.io/bsmiquelini/fortune-cookie:latest
+
+      - name: Push Docker image
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ env.USERNAME }} --password-stdin
+          docker push ghcr.io/bsmiquelini/fortune-cookie:latest
