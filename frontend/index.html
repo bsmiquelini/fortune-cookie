@@ -1,30 +1,401 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Fortune Cookie</title>
-    <!-- Include Tailwind CSS from the CDN -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Abra um fortune cookie digital e descubra sua sorte!">
+    <title>🥠 Fortune Cookie - Descubra Sua Sorte</title>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* Custom animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.8); }
+        }
+
+        @keyframes rotate-slow {
+            from { transform: rotateY(0deg) rotateX(0deg); }
+            to { transform: rotateY(360deg) rotateX(10deg); }
+        }
+
+        @keyframes crack-open {
+            0% { 
+                transform: rotateX(0deg) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: rotateX(20deg) scale(1.05);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: rotateX(45deg) scale(0.95);
+                opacity: 0;
+            }
+        }
+
+        @keyframes slide-in {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes pulse-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .animate-glow {
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        .animate-rotate-slow {
+            animation: rotate-slow 4s linear infinite;
+        }
+
+        .animate-crack {
+            animation: crack-open 0.8s ease-out forwards;
+        }
+
+        .animate-slide-in {
+            animation: slide-in 0.6s ease-out forwards;
+        }
+
+        .animate-shimmer {
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+        }
+
+        .animate-pulse-scale {
+            animation: pulse-scale 1.5s ease-in-out infinite;
+        }
+
+        /* Glassmorphism effect */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+        }
+
+        /* Cookie 3D effect */
+        .cookie-perspective {
+            perspective: 1000px;
+        }
+
+        .cookie {
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease-out;
+        }
+
+        .cookie:hover {
+            transform: rotateY(15deg) rotateX(-10deg);
+        }
+
+        .cookie.opened {
+            animation: crack-open 0.8s ease-out forwards;
+        }
+
+        /* Gradient backgrounds */
+        .gradient-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .gradient-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .gradient-accent {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        /* Button enhancements */
+        .btn-magic {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .btn-magic::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.3);
+            transition: left 0.5s ease;
+        }
+
+        .btn-magic:hover::before {
+            left: 100%;
+        }
+
+        .btn-magic:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Particle effect */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+        }
+
+        @keyframes particle-float {
+            0% {
+                opacity: 1;
+                transform: translateY(0) translateX(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) translateX(var(--tx)) scale(0);
+            }
+        }
+
+        .particle-animation {
+            animation: particle-float 1.5s ease-out forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .cookie-container {
+                transform: scale(0.8);
+            }
+            
+            h1 {
+                font-size: 2rem !important;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="text-center">
-        <h1 class="text-4xl font-bold mb-8">Fortune Cookie</h1>
-        <button onclick="getFortune()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Get Your Fortune
-        </button>
-        <!-- Fortune message box -->
-        <div id="fortune" class="text-xl mt-6 text-gray-700 border border-gray-300 rounded p-4 h-24 flex items-center justify-center">
-            <!-- The fortune message will appear here -->
+<body class="gradient-primary min-h-screen flex items-center justify-center overflow-hidden relative">
+    <!-- Animated background elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+        <div class="absolute top-40 right-10 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style="animation-delay: 2s"></div>
+        <div class="absolute -bottom-8 left-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float" style="animation-delay: 4s"></div>
+    </div>
+
+    <!-- Main container -->
+    <div class="relative z-10 w-full max-w-2xl mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-12 animate-slide-in">
+            <h1 class="text-5xl md:text-6xl font-black mb-4 text-white drop-shadow-lg">
+                🥠 Fortune Cookie
+            </h1>
+            <p class="text-white/80 text-lg md:text-xl">
+                Clique no cookie e descubra qual é sua sorte hoje!
+            </p>
+        </div>
+
+        <!-- Cookie card container -->
+        <div class="flex justify-center mb-8">
+            <div class="cookie-perspective">
+                <button 
+                    id="cookieBtn"
+                    onclick="getFortune()"
+                    disabled
+                    class="cookie glass px-8 py-8 rounded-3xl text-center transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent shadow-2xl hover:shadow-3xl disabled:cursor-wait"
+                    aria-label="Clique para abrir o fortune cookie"
+                    title="Clique para abrir o cookie"
+                >
+                    <div class="text-8xl mb-4 animate-float">🥠</div>
+                    <p class="text-white font-semibold text-sm md:text-base">
+                        Clique para Abrir
+                    </p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Fortune display box -->
+        <div id="fortuneContainer" class="relative">
+            <div id="fortune" class="glass rounded-3xl p-8 md:p-12 text-center min-h-32 flex flex-col items-center justify-center shadow-2xl transform transition-all duration-500 opacity-0 translate-y-4 pointer-events-none"
+                 role="region"
+                 aria-live="polite"
+                 aria-label="Sua sorte foi revelada">
+                
+                <!-- Loading state -->
+                <div id="loadingState" class="hidden text-center">
+                    <div class="spinner mx-auto mb-4"></div>
+                    <p class="text-white/70 font-medium">Abrindo o cookie...</p>
+                </div>
+
+                <!-- Fortune text -->
+                <div id="fortuneContent" class="hidden">
+                    <div class="text-5xl mb-6 animate-slide-in">✨</div>
+                    <p id="fortuneText" class="text-white text-2xl md:text-3xl font-bold leading-relaxed mb-6 animate-slide-in" 
+                       style="animation-delay: 0.2s">
+                    </p>
+                    <button 
+                        onclick="resetFortune()"
+                        class="btn-magic gradient-accent text-white font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all duration-300 transform hover:scale-105 active:scale-95 mt-6"
+                        aria-label="Clique para outra sorte"
+                    >
+                        🔄 Outra Sorte
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer with stats -->
+        <div class="text-center mt-12 text-white/60 text-sm">
+            <p>✨ Cada cookie carrega uma nova sorte ✨</p>
         </div>
     </div>
 
     <script>
+        const cookieBtn = document.getElementById('cookieBtn');
+        const fortune = document.getElementById('fortune');
+        const fortuneContainer = document.getElementById('fortuneContainer');
+        const fortuneText = document.getElementById('fortuneText');
+        const loadingState = document.getElementById('loadingState');
+        const fortuneContent = document.getElementById('fortuneContent');
+
+        // Initialize button as enabled
+        window.addEventListener('DOMContentLoaded', () => {
+            cookieBtn.disabled = false;
+        });
+
         async function getFortune() {
-            const response = await fetch('/fortune');
-            const data = await response.json();
-            document.getElementById('fortune').innerText = data.message;
+            // Disable button and show loading
+            cookieBtn.disabled = true;
+            loadingState.classList.remove('hidden');
+            fortuneContent.classList.add('hidden');
+            
+            // Show fortune container
+            fortune.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+            fortune.classList.add('opacity-100', 'translate-y-0');
+            
+            // Add crack animation to cookie
+            cookieBtn.classList.add('animate-crack');
+            
+            try {
+                const response = await fetch('/fortune');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Simulate a bit of loading time for better UX
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Show content
+                loadingState.classList.add('hidden');
+                fortuneContent.classList.remove('hidden');
+                fortuneText.textContent = data.message;
+                
+                // Create particle effects
+                createParticles();
+                
+            } catch (error) {
+                console.error('Erro ao buscar fortuna:', error);
+                loadingState.classList.add('hidden');
+                fortuneContent.classList.remove('hidden');
+                fortuneText.textContent = '🍂 Algo deu errado... tente novamente!';
+            } finally {
+                cookieBtn.disabled = true; // Keep disabled until reset
+            }
         }
+
+        function resetFortune() {
+            // Reset UI
+            fortune.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+            fortune.classList.remove('opacity-100', 'translate-y-0');
+            fortuneContent.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+            
+            // Reset cookie button
+            cookieBtn.classList.remove('animate-crack');
+            cookieBtn.disabled = false;
+            
+            // Remove previous animation class to allow re-animation
+            void cookieBtn.offsetWidth; // Trigger reflow
+        }
+
+        function createParticles() {
+            const colors = ['✨', '🌟', '⭐', '💫', '🎉'];
+            const container = document.body;
+            
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle particle-animation text-2xl';
+                particle.textContent = colors[Math.floor(Math.random() * colors.length)];
+                
+                const x = Math.random() * window.innerWidth;
+                const y = Math.random() * window.innerHeight;
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+                
+                container.appendChild(particle);
+                
+                // Remove particle after animation
+                setTimeout(() => particle.remove(), 1500);
+            }
+        }
+
+        // Add keyboard support
+        document.addEventListener('keydown', (e) => {
+            if ((e.code === 'Space' || e.code === 'Enter') && !cookieBtn.disabled) {
+                e.preventDefault();
+                cookieBtn.click();
+            }
+        });
+
+        // Prevent right-click menu on cookie (optional, for better UX)
+        cookieBtn.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
     </script>
 </body>
 </html>
-
