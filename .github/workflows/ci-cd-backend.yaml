@@ -4,9 +4,9 @@ on:
   push:
   #  branches:
   #    - main
-  #  paths:
-  #    - 'backend/**'
-  #    - '.github/workflows/build-and-publish.yml'
+    paths:
+      - 'backend/**'
+      - '.github/workflows/ci-cd-backend.yaml'
   pull_request:
     branches:
       - main
