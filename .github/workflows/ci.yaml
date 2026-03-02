@@ -2,11 +2,11 @@ name: Build and Publish Backend
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'backend/**'
-      - '.github/workflows/build-and-publish.yml'
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'backend/**'
+  #    - '.github/workflows/build-and-publish.yml'
   pull_request:
     branches:
       - main
